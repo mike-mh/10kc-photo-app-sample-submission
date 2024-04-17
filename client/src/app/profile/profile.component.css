@@ -1,0 +1,47 @@
+  .navigation-buttons {
+    padding-top: 15px;
+    padding-left: 25px;
+  }
+
+  .button-spacing {
+    padding: 10px;
+  }
+
+  .image-submission-padding {
+    padding-top: 150px;
+  }
+
+  .float-right {
+    float: right;
+    padding-right: 100px;
+  }
+
+  .remove-button {
+    float: right;
+    padding-left: 130px;
+  }
+
+  .preview-img {
+    object-fit: contain;
+    height: 300px;
+    width: 300px;
+    margin: auto;
+  }
+
+  .center {
+    margin: auto;
+    width: 700px;
+    padding: 10px;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .image-card {
+    max-width: 400px;
+  }
+
+  .images-layout {
+    display: inline-block;
+    padding: 15px;
+  }

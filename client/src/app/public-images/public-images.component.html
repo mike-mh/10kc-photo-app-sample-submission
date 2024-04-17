@@ -1,0 +1,48 @@
+<div *ngIf="!viewingComments">
+    <div class="navigation-buttons">
+        <button mat-flat-button color="warn" (click)="getPreviousImages()" [hidden]="!hasBefore">Previous</button>
+        <span class="button-spacing"></span>
+        <button mat-flat-button color="warn" (click)="getNextImages()" [hidden]="!hasAfter">Next</button>
+    </div>
+    <div *ngFor="let cardImage of images" class="images-layout">
+        <mat-card class="image-card">
+            <mat-card-header>
+                <mat-card-title>Photo by {{cardImage.owner}}</mat-card-title>
+                <mat-card-subtitle>{{ cardImage.date }}</mat-card-subtitle>
+            </mat-card-header>
+            <img mat-card-image [src]="cardImage.image">
+            <mat-card-actions>
+                <button mat-button
+                    (click)="displayComments(cardImage.id, cardImage.image, cardImage.owner, cardImage.date)">COMMENTS</button>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+</div>
+<div class="center" *ngIf="viewingComments">
+    <button mat-flat-button color="warn" class="exit-button" (click)="exitComments()">Exit Comments</button>
+    <mat-card class="comment-image-card">
+        <mat-card-header>
+            <mat-card-title>{{commentImageOwner}}</mat-card-title>
+            <mat-card-subtitle>{{commentImageDate}}</mat-card-subtitle>
+        </mat-card-header>
+        <img mat-card-image [src]="commentImg">
+    </mat-card>
+    <button mat-flat-button color="primary" *ngIf="!writingComment && isSignedIn" (click)="startWritingComment()">ADD A
+        COMMENT</button>
+    <textarea *ngIf="writingComment" [(ngModel)]="newCommentText"></textarea>
+    <div class="top-padding">
+        <button mat-flat-button color="primary" *ngIf="writingComment" (click)="submitComment()">SUBMIT</button>
+        <span class="cancel-comment-button-padding"></span>
+        <button mat-flat-button color="warn" *ngIf="writingComment" (click)="stopWritingComment()">CANCEL</button>
+    </div>
+    <mat-card  *ngFor="let comment of comments" class="comment-image-card">
+        <mat-card-header>
+            <mat-card-title>{{comment.owner}}</mat-card-title>
+            <mat-card-subtitle>{{comment.date}}</mat-card-subtitle>
+            <mat-card-subtitle>{{comment.time}}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            {{comment.comment}}
+          </mat-card-content>
+    </mat-card>
+</div>

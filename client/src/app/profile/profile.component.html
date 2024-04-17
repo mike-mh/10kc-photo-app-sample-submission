@@ -1,0 +1,47 @@
+<div>
+  <div *ngIf="!uploadingImage">
+    <div class="navigation-buttons">
+      <button mat-flat-button color="warn" (click)="getPreviousImages()" [hidden]="!hasBefore">Previous</button>
+      <span class="button-spacing"></span>
+      <button mat-flat-button color="warn" (click)="getNextImages()" [hidden]="!hasAfter">Next</button>
+    </div>
+    <div>
+      <button mat-button color="primary" (click)="toggleUploadDisplay()" class="float-right">Upload an image</button>
+    </div>
+    <div *ngFor="let cardImage of personalImages; let i = index" class="images-layout">
+      <mat-card class="image-card">
+        <mat-card-header>
+          <mat-card-actions class="remove-button">
+            <button mat-flat-button color="warn" (click)="deleteImage(cardImage.id)">X</button>
+          </mat-card-actions>
+          <mat-card-title>{{ cardImage.date }}</mat-card-title>
+          <mat-card-subtitle>{{ !cardImage.status ? 'Public image': 'Private image' }}</mat-card-subtitle>
+        </mat-card-header>
+        <img mat-card-image [src]="cardImage.image">
+      </mat-card>
+    </div>
+  </div>
+  <div class="center" *ngIf="uploadingImage">
+    <img *ngIf="imageBeingPreviewed" class="preview-img" [src]="imgSrc" />
+    <div>
+      <div class="image-submission-padding">
+        <ngx-file-drop *ngIf="!imageBeingPreviewed" dropZoneLabel="Drop files here" (onFileDrop)="dropped($event)">
+          <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+            You can drag and drop your image here or click the 'Browse Files' button.
+            <button type="button" (click)="openFileSelector()">Browse Files</button>
+          </ng-template>
+        </ngx-file-drop>
+      </div>
+      <mat-button-toggle-group *ngIf="imageBeingPreviewed" name="publicPrivate" aria-label="Public Private"
+        [value]="selectedImageStatus" (change)="onStatusSelectionChange($event)">
+        <mat-button-toggle [value]="imageStatusEnum.Public">Public</mat-button-toggle>
+        <mat-button-toggle [value]="imageStatusEnum.Private" selected>Private</mat-button-toggle>
+      </mat-button-toggle-group>
+      <div>
+        <button *ngIf="imageBeingPreviewed" mat-button color="primary" (click)="submitImage()">Submit</button>
+        <button *ngIf="imageBeingPreviewed" mat-button color="warn" (click)="removeImage()">Remove Image</button>
+        <button *ngIf="!imageBeingPreviewed" mat-button color="warn" (click)="toggleUploadDisplay()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>

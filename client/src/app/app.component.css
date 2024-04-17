@@ -1,0 +1,11 @@
+.login-button-spacer {
+  flex: 1 1 auto;
+}
+
+.greeting-spacer {
+  padding-right: 35px;
+}
+
+.home-link {
+  cursor: pointer;
+}

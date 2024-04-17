@@ -1,0 +1,19 @@
+<mat-toolbar>
+  <span class="home-link" routerLink="/ng/public-images-home" routerLinkActive="active">10KC Images App Sample</span>
+  <span class="login-button-spacer"></span>
+  <div *ngIf="signedIn">
+    <span class="greeting-spacer">Hello there {{username}}!</span>
+    <button mat-flat-button color="primary" routerLink="/ng/profile" routerLinkActive="active"
+      ariaCurrentWhenActive="page">Profile</button>
+    <button mat-flat-button color="warn" (click)="logOut()" ariaCurrentWhenActive="page">Logout</button>
+  </div>
+  <div *ngIf="!signedIn">
+    <button mat-flat-button color="primary" routerLink="/ng/create-account" routerLinkActive="active"
+      ariaCurrentWhenActive="page">Register</button>
+    <button mat-flat-button color="warn" routerLink="/ng/login" routerLinkActive="active"
+      ariaCurrentWhenActive="page">Login</button>
+  </div>
+</mat-toolbar>
+
+
+<router-outlet />
