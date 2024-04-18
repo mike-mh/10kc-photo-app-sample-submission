@@ -17,7 +17,7 @@ import permissionProvider from "./src/utils/permission-provider";
 dotenv.config();
 
 
-connect(process.env.DB_CONN_STRING as string);
+connect(`${process.env.DB_CONN_STRING as string}${process.env.DB_NAME as string}`);
 
 const app = new Application({
   namespace: "api",
