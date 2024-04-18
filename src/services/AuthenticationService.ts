@@ -40,16 +40,6 @@ export default class AuthenticationService {
         return hash;
     }
 
-    private async passwordIsValid(email: string, password: String): Promise<boolean> {
-        const user = await User.findOne({ email }, 'password').exec();
-        if (!user) {
-            return false;
-        }
-
-
-        return bcrypt.compare(`${process.env.PASSWORD_PEPPER}${password}`, user.password);
-    }
-
     public async login(op: Operation, user: ResourceAttributes) {
         return (
             op.data?.attributes.email === user.email &&
@@ -59,7 +49,7 @@ export default class AuthenticationService {
 
     public async getUserInformationFromToken(token: String): Promise<{}> {
         const tokenIsValid = await this.tokenIsValid(token);
-        
+
         if (!tokenIsValid) {
             return {};
         }
@@ -71,16 +61,17 @@ export default class AuthenticationService {
         return {
             email: user?.email,
             username: user?.username,
-            verified: user?.verified,
+            verified: user?.verified || !!process.env.EMAIL_AUTHENTICATION_BYPASS,
             id: user?.id
         };
     }
 
 
     public async authenticateUserAndIssueTokenWithSession(email: string, password: String): Promise<string> {
-        const user = await User.findOne({email}, 'verified sessions password').exec();
-        
-        if (!user || !user.verified) {
+        const user = await User.findOne({ email }, 'verified sessions password').exec();
+
+        // Add in bypass for demo ease.
+        if (!user || (!user.verified && !process.env.EMAIL_AUTHENTICATION_BYPASS)) {
             throw new Error('Invalid user.');
         }
 
@@ -128,7 +119,8 @@ export default class AuthenticationService {
 
             const user = await User.findById((payload as any).usr, 'verified sessions').exec();
 
-            return !!user && user.verified;
+            // Add bypass for demo purposes
+            return !!user && (user.verified || !!process.env.EMAIL_AUTHENTICATION_BYPASS);
 
         } catch (e) {
             return false;
@@ -141,7 +133,8 @@ export default class AuthenticationService {
         const expirationDate = new Date().getTime() + 1000 * 60 * 60 * (process.env.TOKEN_EXPIRATION_TIME_FOR_VALIDATION_IN_HOURS as any);
         const pendingCode = randomBytes(32).toString("hex");
 
-        const transport = nodemailer.createTransport({
+        // Added an email bypass for ease of demo
+        const transport = (!process.env.EMAIL_AUTHENTICATION_BYPASS) ? nodemailer.createTransport({
             host: process.env.SMTP_HOST,
             // NOT SECURE! THIS IS FOR DEMO PURPOSES ONLY!
             port: 587,
@@ -150,7 +143,7 @@ export default class AuthenticationService {
                 user: process.env.SMTP_USERNAME,
                 pass: process.env.SMTP_PASSWORD
             }
-        });
+        }) : null;
 
         // Handle the case where the user created an account but didn't verify yet.
         // Trash old verification tokens that may still be in the DB
@@ -167,14 +160,17 @@ export default class AuthenticationService {
                 expirationDate,
             });
 
-            const mailOptions = {
-                from: '"10kc Sample" <sample@10kc.com>',
-                to: email,
-                subject: 'Welcome to the 10KC sample!',
-                html: `<b>Hey there! </b><br>Click the link below and you'll join this great site! <br /><a href="http://localhost:8080/email-confirmation/${existingUser.id}/${pendingCode}">Welcome!</a>`,
-            };
+            // Added bypass for eas of demo
+            if (!!transport) {
+                const mailOptions = {
+                    from: '"10kc Sample" <sample@10kc.com>',
+                    to: email,
+                    subject: 'Welcome to the 10KC sample!',
+                    html: `<b>Hey there! </b><br>Click the link below and you'll join this great site! <br /><a href="http://localhost:8080/email-confirmation/${existingUser.id}/${pendingCode}">Welcome!</a>`,
+                };
 
-            transport.sendMail(mailOptions);
+                transport.sendMail(mailOptions);
+            }
 
             const userInfo = {
                 id: existingUser.id,
@@ -205,7 +201,17 @@ export default class AuthenticationService {
             html: `<b>Hey there! </b><br>Click the link below and you'll join this great site! <br /><a href="http://localhost:8080/email-confirmation/${user.id}/${pendingCode}">Welcome!</a>`,
         };
 
-        transport.sendMail(mailOptions);
+        // Added bypass for ease of demo
+        if (!!transport) {
+            const mailOptions = {
+                from: '"10kc Sample" <sample@10kc.com>',
+                to: email,
+                subject: 'Welcome to the 10KC sample!',
+                html: `<b>Hey there! </b><br>Click the link below and you'll join this great site! <br /><a href="http://localhost:8080/email-confirmation/${user.id}/${pendingCode}">Welcome!</a>`,
+            };
+
+            transport.sendMail(mailOptions);
+        }
 
         const userInfo = {
             id: user.id,

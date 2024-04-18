@@ -151,6 +151,7 @@ export class ProfileComponent implements OnInit {
         this.personalImages = r.data.map((a: any) => {
           a.attributes.timestamp = a.attributes.date;
           a.attributes.date = new Date(a.attributes.date).toDateString();
+          a.attributes.id = a.id;
           return a.attributes
         });
       });
@@ -165,6 +166,7 @@ export class ProfileComponent implements OnInit {
         this.personalImages = r.data.map((a: any) => {
           a.attributes.timestamp = a.attributes.date;
           a.attributes.date = new Date(a.attributes.date).toDateString();
+          a.attributes.id = a.id;
           return a.attributes
         });
       });

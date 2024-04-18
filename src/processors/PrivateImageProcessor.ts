@@ -63,6 +63,7 @@ export default class PrivateImageProcessor<ResourceT extends PrivateImage> exten
                 .exec();
 
             return images.map(i => ({
+                id: i.id,
                 owner: i.owner.username,
                 image: i.image,
                 status: i.status,
@@ -83,6 +84,7 @@ export default class PrivateImageProcessor<ResourceT extends PrivateImage> exten
                 images.sort((a, b) => a.date < b.date ? -1: 1);
 
             return images.map(i => ({
+                id: i.id,
                 owner: i.owner.username,
                 image: i.image,
                 status: i.status,
