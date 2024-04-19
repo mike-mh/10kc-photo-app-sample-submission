@@ -68,7 +68,7 @@ export default class PrivateImageProcessor<ResourceT extends PrivateImage> exten
                 image: i.image,
                 status: i.status,
                 date: i.date
-            })) as any;
+            }));
         }
 
         if (!!beforeCursor) {
@@ -89,7 +89,7 @@ export default class PrivateImageProcessor<ResourceT extends PrivateImage> exten
                 image: i.image,
                 status: i.status,
                 date: i.date
-            })) as any;
+            }));
         }
 
 

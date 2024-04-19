@@ -117,6 +117,6 @@ export default class ImageProcessor<ResourceT extends Image> extends OperationPr
             id: image.id,
             status: op.data?.attributes.status,
             date: op.data?.attributes.date
-        } as any;
+        };
     }
 }

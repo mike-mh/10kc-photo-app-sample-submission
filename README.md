@@ -27,7 +27,7 @@ PASSWORD_PEPPER='YOUR_PEPPER'
 TOKEN_EXPIRATION_TIME_IN_MINUTES=60
 TOKEN_EXPIRATION_TIME_FOR_VALIDATION_IN_HOURS=60
 
-EMAIL_AUTHENTICATION_BYPASS=0
+EMAIL_AUTHENTICATION_BYPASS=1
 ```
 
 This app does use email authentication to validate users so if you wish to activate accounts you'll need an SMTP service.
@@ -61,7 +61,7 @@ Comments are also accessible for iamges but you won't be able to post comments w
 > [!NOTE]
 > This sample is for demonstration purposes only and is not secure. If you do provide an email address I highly recommend you use a testing email delivery platform like [mailtrap.io](https://mailtrap.io). Would also highly discourage using passwords associated with actual accounts!
 >
-> You can bypass this step entirely by setting the `EMAIL_AUTHENTICATION_BYPASS` value in the `.env` file to `1`.
+> You can bypass this step entirely by setting the `EMAIL_AUTHENTICATION_BYPASS` value in the `.env` file to `1` If you want it to be activated it's easier to just either leave the value blank or remove it from the `.env` file entirely. 
 
 If you haven't made an account you can make one at the register button and follow a simple prompt to provide a username, email and password.
 

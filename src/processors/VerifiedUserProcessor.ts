@@ -3,12 +3,12 @@ import VerifiedUser from "../resources/VerifiedUser";
 import JsonApiError from "kurier/dist/errors/error";
 import AuthenticationService from "../services/AuthenticationService";
 
-export default class VerifiedUserProcessor extends UserProcessor<VerifiedUser> {
+export default class VerifiedUserProcessor<ResourceT extends VerifiedUser> extends UserProcessor<ResourceT> {
     public static resourceClass = VerifiedUser;
 
     async identify(op: Operation): Promise<HasId | HasId[]> {
         const data = await AuthenticationService.getInstance()
-            .getUserInformationFromToken(op.data?.attributes.token as String) as any;
+            .getUserInformationFromToken(op.data?.attributes.token as String);
 
         return {
             id: data.id,
@@ -27,10 +27,10 @@ export default class VerifiedUserProcessor extends UserProcessor<VerifiedUser> {
         }
 
         const user = await AuthenticationService.getInstance().createNewPendingUser(
-            op.data?.attributes.username as any,
-            op.data?.attributes.email as any,
-            op.data?.attributes.password as any);
+            op.data?.attributes.username as string,
+            op.data?.attributes.email as string,
+            op.data?.attributes.password as string);
 
-        return user as any;
+        return user;
     }
 }

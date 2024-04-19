@@ -4,7 +4,7 @@ import * as nodemailer from 'nodemailer';
 import { v4 as uuidv4 } from 'uuid';
 import User, { IUser } from "../models/user.model";
 import ValidationToken, { IValidationToken } from "../models/validationToken.model";
-import { Operation, ResourceAttributes } from 'kurier';
+import { HasId, Operation, ResourceAttributes } from 'kurier';
 import { createSecretKey, randomBytes } from 'node:crypto';
 import validationTokenModel from '../models/validationToken.model';
 import VerifiedUser from '../resources/VerifiedUser';
@@ -47,11 +47,21 @@ export default class AuthenticationService {
         );
     }
 
-    public async getUserInformationFromToken(token: String): Promise<{}> {
+    public async getUserInformationFromToken(token: String): Promise<{
+        id: string,
+        username: string | undefined,
+        email: string | undefined,
+        verified: boolean | undefined,
+    }> {
         const tokenIsValid = await this.tokenIsValid(token);
 
         if (!tokenIsValid) {
-            return {};
+            return {
+                id: '',
+                username: undefined,
+                email: undefined,
+                verified: undefined
+            };
         }
 
         const payload = jose.decodeJwt(token as any);
@@ -127,14 +137,14 @@ export default class AuthenticationService {
         }
     }
 
-    public async createNewPendingUser(username: string, email: string, password: string): Promise<VerifiedUser> {
+    public async createNewPendingUser(username: string, email: string, password: string): Promise<HasId> {
         // Validate no existing users are present.
         const existingUser = await User.findOne({ $or: [{ email }, { username }] }).exec();
         const expirationDate = new Date().getTime() + 1000 * 60 * 60 * (process.env.TOKEN_EXPIRATION_TIME_FOR_VALIDATION_IN_HOURS as any);
         const pendingCode = randomBytes(32).toString("hex");
 
         // Added an email bypass for ease of demo
-        const transport = (!process.env.EMAIL_AUTHENTICATION_BYPASS) ? nodemailer.createTransport({
+        const transport = !process.env.EMAIL_AUTHENTICATION_BYPASS ? nodemailer.createTransport({
             host: process.env.SMTP_HOST,
             // NOT SECURE! THIS IS FOR DEMO PURPOSES ONLY!
             port: 587,
@@ -193,13 +203,6 @@ export default class AuthenticationService {
             validationToken: pendingCode,
             expirationDate,
         });
-
-        const mailOptions = {
-            from: '"10kc Sample" <sample@10kc.com>',
-            to: email,
-            subject: 'Welcome to the 10KC sample!',
-            html: `<b>Hey there! </b><br>Click the link below and you'll join this great site! <br /><a href="http://localhost:8080/email-confirmation/${user.id}/${pendingCode}">Welcome!</a>`,
-        };
 
         // Added bypass for ease of demo
         if (!!transport) {

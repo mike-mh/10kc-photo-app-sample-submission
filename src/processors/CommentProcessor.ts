@@ -1,4 +1,4 @@
-import { OperationProcessor, Operation, HasId, User, ResourceRelationship, JsonApiErrors, Authorize, IfUserHasPermission } from "kurier";
+import { OperationProcessor, Operation, HasId, Authorize, IfUserHasPermission } from "kurier";
 import Comment from "../resources/Comment";
 import DBComment, { IComment } from "../models/comment.model";
 
@@ -8,7 +8,7 @@ export default class CommentProcessor<ResourceT extends Comment> extends Operati
     @Authorize(IfUserHasPermission('verified'))
     async add(op: Operation): Promise<HasId> {
 
-        const newComment: any = await DBComment.create({
+        const newComment = await DBComment.create({
             owner: this.appInstance.user?.id,
             date: op.data?.attributes.date,
             image: op.data?.attributes.imageid,
@@ -26,18 +26,18 @@ export default class CommentProcessor<ResourceT extends Comment> extends Operati
         const image = op.params?.filter?.image;
 
         if (!image) {
-            return [] as any;
+            return [];
         }
 
         const comments = await DBComment.find({ image })
             .populate('owner')
             .exec();
 
-        return comments.map((c: any) => ({
+        return comments.map(c => ({
             id: c.id,
             comment: c.comment,
             owner: c.owner.username,
             date: c.date
-        })) as any;
+        }));
     }
 }

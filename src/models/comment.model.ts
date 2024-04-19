@@ -16,4 +16,4 @@ const CommentSchema: Schema = new Schema({
   image: { type: Schema.Types.ObjectId, required: true, ref: 'DBImage' }
 });
 
-export default mongoose.model<IUser>('DBComment', CommentSchema);
+export default mongoose.model<IComment>('DBComment', CommentSchema);
